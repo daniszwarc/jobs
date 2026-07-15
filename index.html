@@ -677,56 +677,10 @@ async function generate() {
     await sleep(300);
     setSteps(steps, 1);
 
-    const systemPrompt = `You are a CV tailoring assistant for Daniel Szwarc. Given a job description, analyze it and produce tailored CV content + cover letter using ONLY the master CV material below.
-
-LANGUAGE RULE: Detect the language of the job description. Write ALL output fields (summary, project bullets, cover letter paragraphs, labels, skill values) in that same language. If the JD is in Spanish, everything is in Spanish. If in French, everything in French. If in English, everything in English. JSON keys always stay in English -- only the values change language. Daniel's name, company names, and tech stack terms (FastAPI, LangChain, pgvector, etc.) stay as-is regardless of language.
-
-${uploadedCV}
-
-Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
-{
-  "company": "company name from JD",
-  "role_title": "adapted title line for the CV header (e.g. 'AI Solutions Engineer | Full-Stack Developer')",
-  "summary": "adapted professional summary, pick or blend the right variant",
-  "projects": [
-    {
-      "name": "Project Name",
-      "label": "| short label / context",
-      "bullets": ["bullet 1", "bullet 2"]
-    }
-  ],
-  "experience": [
-    {
-      "title": "Job Title",
-      "company": "Company Name",
-      "location": "City, Province",
-      "dates": "2014 - Present",
-      "type": "primary | consulting_intro | consulting_subrole",
-      "bullets": ["bullet or intro line"]
-    }
-  ],
-  "skills": [
-    { "label": "AI / ML", "value": "LangChain, LangGraph..." }
-  ],
-  "cover_letter": {
-    "salutation": "Hi,",
-    "para1": "opening -- why this role/company caught attention, no filler",
-    "para2": "fit -- one concrete proof point: what was built, what wasn't, result",
-    "para3": "why this company specifically, reference something real from JD",
-    "para4": "brief confident close, no cliches"
-  },
-  "brief": "2-3 sentences on what was emphasized, what was left out, and why"
-}`;
-
     const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Job description:\n\n' + jd }
-        ]
-      })
+      body: JSON.stringify({ cv_text: uploadedCV, jd })
     });
 
     if (!res.ok) {
