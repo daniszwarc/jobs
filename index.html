@@ -679,6 +679,8 @@ async function generate() {
 
     const systemPrompt = `You are a CV tailoring assistant for Daniel Szwarc. Given a job description, analyze it and produce tailored CV content + cover letter using ONLY the master CV material below.
 
+LANGUAGE RULE: Detect the language of the job description. Write ALL output fields (summary, project bullets, cover letter paragraphs, labels, skill values) in that same language. If the JD is in Spanish, everything is in Spanish. If in French, everything in French. If in English, everything in English. JSON keys always stay in English -- only the values change language. Daniel's name, company names, and tech stack terms (FastAPI, LangChain, pgvector, etc.) stay as-is regardless of language.
+
 ${uploadedCV}
 
 Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
