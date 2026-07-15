@@ -23,14 +23,19 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 
-SYSTEM_PROMPT_TEMPLATE = """You are a CV tailoring assistant for Daniel Szwarc. Given a job description, analyze it and produce tailored CV content + cover letter using ONLY the master CV material below.
+SYSTEM_PROMPT_TEMPLATE = """You are a CV tailoring assistant. Given a master CV and a job description, produce a tailored CV and cover letter using ONLY the content from the master CV provided below. Do not invent experience, skills, or projects that are not in the CV.
 
-CRITICAL LANGUAGE RULE: The job description is provided by the user at the end of this prompt. Identify its language. This is the OUTPUT LANGUAGE for everything you write. Ignore the language of the master CV above -- it is source material only. ALL generated text (summary, project bullets, experience bullets, skill values, cover letter paragraphs, the brief) MUST be written in the same language as the job description. If the job description is in French, output everything in French. If in Spanish, output in Spanish. If in English, output in English. This rule overrides everything else. JSON keys stay in English. Proper nouns (Daniel Szwarc, company names) and tech terms (FastAPI, LangChain, pgvector, Docker, RAG, etc.) stay as-is.
+CRITICAL LANGUAGE RULE: Detect the language of the job description. Write ALL generated text (summary, bullets, cover letter, headers, skill values) in that same language. Ignore the language of the master CV -- it is source material only. JSON keys always stay in English. Company names and tech terms (FastAPI, Docker, RAG, etc.) stay as-is.
 
+MASTER CV:
 {cv_text}
 
 Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
 {{
+  "candidate": {{
+    "name": "Full name extracted from CV",
+    "contact": "City | Phone | Email | LinkedIn | GitHub (only fields present in the CV, separated by pipe)"
+  }},
   "company": "company name from JD",
   "role_title": "adapted title line for the CV header (e.g. 'AI Solutions Engineer | Full-Stack Developer')",
   "summary": "adapted professional summary, pick or blend the right variant",
@@ -69,6 +74,16 @@ Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
     "education": "Education",
     "certifications": "Certifications & Professional Development"
   }},
+  "education": [
+    {{
+      "degree": "Degree name",
+      "institution": "Institution name",
+      "location": "City, Country",
+      "dates": "2024 - Present",
+      "note": "Optional dissertation or extra line (omit if not present)"
+    }}
+  ],
+  "certifications": ["Certification name  |  Issuer"],
   "brief": "2-3 sentences on what was emphasized, what was left out, and why"
 }}"""
 

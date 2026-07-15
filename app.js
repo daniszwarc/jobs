@@ -343,15 +343,15 @@ async function buildCV(cv) {
     // Header
     new Paragraph({
       alignment: AlignmentType.CENTER, spacing: { before: 0, after: 40 },
-      children: [new TextRun({ text: "DANIEL SZWARC", bold: true, size: 40, font: "Arial", color: BLACK })]
+      children: [new TextRun({ text: (cv.candidate?.name || "").toUpperCase(), bold: true, size: 40, font: "Arial", color: BLACK })]
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER, spacing: { before: 0, after: 40 },
-      children: [new TextRun({ text: cv.role_title || "AI Automation Engineer  |  Full-Stack Developer", size: 22, font: "Arial", color: ACCENT })]
+      children: [new TextRun({ text: cv.role_title || "", size: 22, font: "Arial", color: ACCENT })]
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER, spacing: { before: 0, after: 60 },
-      children: [new TextRun({ text: "Montreal, Quebec  |  514.220.4421  |  dani@thiez.com  |  linkedin.com/in/daniszwarc  |  github.com/daniszwarc", size: 17, font: "Arial", color: GRAY })]
+      children: [new TextRun({ text: cv.candidate?.contact || "", size: 17, font: "Arial", color: GRAY })]
     }),
     divider(),
     // Summary
@@ -375,18 +375,16 @@ async function buildCV(cv) {
     divider(),
     // Education
     section(h.education),
-    subH("Master of Science in Artificial Intelligence (Expected 2026)", "2024 - Present"),
-    plain("University of Liverpool, England", { before: 0, after: 10, color: GRAY }),
-    plain("Dissertation: WorkflowSynth -- LLM-guided programme synthesis with formal verification for enterprise workflows", { before: 0, after: 20, color: GRAY, italics: true }),
-    subH("Microcomputer Programming & Web Developer Certificates", "1999 - 2001"),
-    plain("Centennial College, Toronto, ON", { before: 0, after: 20, color: GRAY }),
-    plain("Earlier studies in Electronic Engineering, Sound Design, and Technical Electronics -- Buenos Aires, Argentina (1985-1993)", { before: 20, after: 20, color: GRAY, italics: true }),
-    divider(),
-    // Certs
-    section(h.certifications),
-    bul("LangChain Developer Certification  |  LangChain Inc."),
-    bul("Agentic RAG Specialization  |  Coursera"),
-    bul("AI & Automation Specializations  |  Coursera / Udemy"),
+    ...(cv.education || []).flatMap(e => [
+      subH(e.degree, e.dates),
+      plain([e.institution, e.location].filter(Boolean).join(", "), { before: 0, after: 10, color: GRAY }),
+      ...(e.note ? [plain(e.note, { before: 0, after: 20, color: GRAY, italics: true })] : [])
+    ]),
+    ...((cv.certifications || []).length > 0 ? [
+      divider(),
+      section(h.certifications),
+      ...(cv.certifications || []).map(c => bul(c)),
+    ] : []),
   ];
 
   const doc = new Document({
@@ -442,11 +440,11 @@ async function buildCoverLetter(cv) {
       children: [
         new Paragraph({
           alignment: AlignmentType.CENTER, spacing: { before: 0, after: 40 },
-          children: [new TextRun({ text: "DANIEL SZWARC", bold: true, size: 36, font: "Arial", color: BLACK })]
+          children: [new TextRun({ text: (cv.candidate?.name || "").toUpperCase(), bold: true, size: 36, font: "Arial", color: BLACK })]
         }),
         new Paragraph({
           alignment: AlignmentType.CENTER, spacing: { before: 0, after: 120 },
-          children: [new TextRun({ text: "Montreal, Quebec  |  514.220.4421  |  dani@thiez.com  |  linkedin.com/in/daniszwarc", size: 17, font: "Arial", color: GRAY })]
+          children: [new TextRun({ text: cv.candidate?.contact || "", size: 17, font: "Arial", color: GRAY })]
         }),
         new Paragraph({
           spacing: { before: 0, after: 240 },
