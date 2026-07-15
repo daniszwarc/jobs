@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import os
@@ -64,9 +65,19 @@ Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
 }}"""
 
 
+app.mount("/static", StaticFiles(directory="."), name="static")
+
 @app.get("/")
 async def serve_index():
     return FileResponse("index.html")
+
+@app.get("/app.css")
+async def serve_css():
+    return FileResponse("app.css", media_type="text/css")
+
+@app.get("/app.js")
+async def serve_js():
+    return FileResponse("app.js", media_type="application/javascript")
 
 
 @app.post("/api/generate")
