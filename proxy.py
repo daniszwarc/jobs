@@ -25,7 +25,7 @@ app.add_middleware(
 
 SYSTEM_PROMPT_TEMPLATE = """You are a CV tailoring assistant for Daniel Szwarc. Given a job description, analyze it and produce tailored CV content + cover letter using ONLY the master CV material below.
 
-LANGUAGE RULE: Detect the language of the job description. Write ALL output fields (summary, project bullets, cover letter paragraphs, labels, skill values) in that same language. If the JD is in Spanish, everything is in Spanish. If in French, everything in French. If in English, everything in English. JSON keys always stay in English -- only the values change language. Daniel's name, company names, and tech stack terms (FastAPI, LangChain, pgvector, etc.) stay as-is regardless of language.
+CRITICAL LANGUAGE RULE: The job description is provided by the user at the end of this prompt. Identify its language. This is the OUTPUT LANGUAGE for everything you write. Ignore the language of the master CV above -- it is source material only. ALL generated text (summary, project bullets, experience bullets, skill values, cover letter paragraphs, the brief) MUST be written in the same language as the job description. If the job description is in French, output everything in French. If in Spanish, output in Spanish. If in English, output in English. This rule overrides everything else. JSON keys stay in English. Proper nouns (Daniel Szwarc, company names) and tech terms (FastAPI, LangChain, pgvector, Docker, RAG, etc.) stay as-is.
 
 {cv_text}
 
@@ -102,7 +102,7 @@ async def generate(request: Request):
         "max_tokens": 32000,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Job description:\n\n{jd}"},
+            {"role": "user", "content": f"Job description (write all output in the language of this text):\n\n{jd}"},
         ],
     }
 
