@@ -512,7 +512,7 @@ main {
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/docx@9.5.0/build/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script>
 // ── PDF.js worker setup ───────────────────────────────────────────────────
@@ -675,7 +675,13 @@ Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
     setSteps(steps, 2);
     const data = await res.json();
     const raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g, '').replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-    const cv = JSON.parse(raw);
+    let cv;
+    try {
+      cv = JSON.parse(raw);
+    } catch (parseErr) {
+      console.error('Raw response:', raw);
+      throw new Error('Response was cut off -- JSON incomplete. Try again.');
+    }
 
     setSteps(steps, 3);
     await sleep(200);
@@ -768,6 +774,7 @@ function dlIcon() {
 // ── Build CV .docx ─────────────────────────────────────────────────────────
 
 async function buildCV(cv) {
+  if (!window.docx) throw new Error('docx library not loaded yet. Please refresh the page.');
   const {
     Document, Packer, Paragraph, TextRun,
     AlignmentType, LevelFormat, BorderStyle, TabStopType
@@ -936,6 +943,7 @@ async function buildCV(cv) {
 // ── Build Cover Letter .docx ───────────────────────────────────────────────
 
 async function buildCoverLetter(cv) {
+  if (!window.docx) throw new Error('docx library not loaded yet. Please refresh the page.');
   const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle } = window.docx;
 
   const ACCENT = "1B4F8A";
