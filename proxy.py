@@ -61,14 +61,14 @@ Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
     "para3": "why this company specifically, reference something real from JD",
     "para4": "brief confident close, no cliches"
   }},
-  "headers": {
+  "headers": {{
     "summary": "Professional Summary",
     "projects": "Current AI Projects",
     "experience": "Professional Experience",
     "skills": "Technical Skills",
     "education": "Education",
     "certifications": "Certifications & Professional Development"
-  },
+  }},
   "brief": "2-3 sentences on what was emphasized, what was left out, and why"
 }}"""
 
