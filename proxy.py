@@ -41,7 +41,7 @@ async def generate(request: Request):
 
     payload = {
         "model": "qwen3.6",
-        "max_tokens": 4000,
+        "max_tokens": 32000,
         "messages": messages,
     }
 
