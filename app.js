@@ -312,6 +312,16 @@ async function buildCV(cv) {
     ]
   });
 
+  // Section headers (translated by model, English fallback)
+  const h = {
+    summary:        cv.headers?.summary        || "Professional Summary",
+    projects:       cv.headers?.projects       || "Current AI Projects",
+    experience:     cv.headers?.experience     || "Professional Experience",
+    skills:         cv.headers?.skills         || "Technical Skills",
+    education:      cv.headers?.education      || "Education",
+    certifications: cv.headers?.certifications || "Certifications & Professional Development",
+  };
+
   // Build experience blocks
   const expBlocks = [];
   const exp = cv.experience || [];
@@ -345,26 +355,26 @@ async function buildCV(cv) {
     }),
     divider(),
     // Summary
-    section("Professional Summary"),
+    section(h.summary),
     plain(cv.summary || ''),
     divider(),
     // Projects
-    section("Current AI Projects"),
+    section(h.projects),
     ...(cv.projects || []).flatMap(p => [
       projH(p.name, p.label),
       ...(p.bullets || []).map(b => bul(b))
     ]),
     divider(),
     // Experience
-    section("Professional Experience"),
+    section(h.experience),
     ...expBlocks,
     divider(),
     // Skills
-    section("Technical Skills"),
+    section(h.skills),
     ...(cv.skills || []).map(s => skillRow(s.label, s.value)),
     divider(),
     // Education
-    section("Education"),
+    section(h.education),
     subH("Master of Science in Artificial Intelligence (Expected 2026)", "2024 - Present"),
     plain("University of Liverpool, England", { before: 0, after: 10, color: GRAY }),
     plain("Dissertation: WorkflowSynth -- LLM-guided programme synthesis with formal verification for enterprise workflows", { before: 0, after: 20, color: GRAY, italics: true }),
@@ -373,7 +383,7 @@ async function buildCV(cv) {
     plain("Earlier studies in Electronic Engineering, Sound Design, and Technical Electronics -- Buenos Aires, Argentina (1985-1993)", { before: 20, after: 20, color: GRAY, italics: true }),
     divider(),
     // Certs
-    section("Certifications & Professional Development"),
+    section(h.certifications),
     bul("LangChain Developer Certification  |  LangChain Inc."),
     bul("Agentic RAG Specialization  |  Coursera"),
     bul("AI & Automation Specializations  |  Coursera / Udemy"),
