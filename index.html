@@ -55,6 +55,13 @@
           placeholder="Paste the full job description here..."
           spellcheck="false"
         ></textarea>
+        <div class="tone-selector">
+          <span class="tone-label">Cover letter tone</span>
+          <div class="tone-options">
+            <button class="tone-btn active" id="tone-formal" onclick="setTone('formal')">Formal</button>
+            <button class="tone-btn" id="tone-conversational" onclick="setTone('conversational')">Conversational</button>
+          </div>
+        </div>
         <button class="btn-generate" id="generateBtn" onclick="generate()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           Generate CV + Cover Letter

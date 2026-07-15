@@ -30,6 +30,25 @@ CRITICAL LANGUAGE RULE: Detect the language of the job description. Write ALL ge
 MASTER CV:
 {cv_text}
 
+COVER LETTER TONE: {tone}
+
+If tone is "formal":
+- 4 structured paragraphs
+- Para 1: why this role/company caught attention, no filler
+- Para 2: one concrete proof point from the CV (specific project or result)
+- Para 3: why this company specifically, reference something real from the JD
+- Para 4: brief confident close, no cliches
+- No em dashes, no flattery, no "I am passionate about"
+- Total: 200-280 words
+
+If tone is "conversational":
+- Write like a real person introducing themselves, not a formal application letter
+- Start with a personal greeting and brief self-introduction (name, background, current situation)
+- Explain naturally why they are reaching out and what they are looking for (internship, job, collaboration)
+- Mention any relevant constraint or context (duration, availability, location flexibility)
+- Close warmly and briefly, offering to send more info if needed
+- Total: 100-180 words, short paragraphs, direct and human
+
 Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
 {{
   "candidate": {{
@@ -60,11 +79,11 @@ Output ONLY valid JSON with no markdown, no backticks, no preamble. Schema:
     {{ "label": "AI / ML", "value": "LangChain, LangGraph..." }}
   ],
   "cover_letter": {{
-    "salutation": "Hi,",
-    "para1": "opening -- why this role/company caught attention, no filler",
-    "para2": "fit -- one concrete proof point: what was built, what wasn't, result",
-    "para3": "why this company specifically, reference something real from JD",
-    "para4": "brief confident close, no cliches"
+    "salutation": "opening greeting appropriate for the tone and language",
+    "para1": "see cover letter tone instructions below",
+    "para2": "see cover letter tone instructions below",
+    "para3": "see cover letter tone instructions below",
+    "para4": "see cover letter tone instructions below"
   }},
   "headers": {{
     "summary": "Professional Summary",
@@ -112,13 +131,14 @@ async def generate(request: Request):
 
     cv_text = body.get("cv_text", "").strip()
     jd = body.get("jd", "").strip()
+    tone = body.get("tone", "formal")
 
     if not cv_text:
         raise HTTPException(status_code=400, detail="Missing cv_text")
     if not jd:
         raise HTTPException(status_code=400, detail="Missing jd")
 
-    system_prompt = SYSTEM_PROMPT_TEMPLATE.format(cv_text=cv_text)
+    system_prompt = SYSTEM_PROMPT_TEMPLATE.format(cv_text=cv_text, tone=tone)
 
     payload = {
         "model": "qwen3.6",

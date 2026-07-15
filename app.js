@@ -4,6 +4,13 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dis
 // ── Master CV (uploaded per session) ─────────────────────────────────────────
 
 let uploadedCV = null;
+let coverLetterTone = 'formal';
+
+function setTone(tone) {
+  coverLetterTone = tone;
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tone-' + tone).classList.add('active');
+}
 
 async function handleCVUpload(file) {
   if (!file) return;
@@ -126,7 +133,7 @@ async function generate() {
     const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cv_text: uploadedCV, jd })
+      body: JSON.stringify({ cv_text: uploadedCV, jd, tone: coverLetterTone })
     });
 
     if (!res.ok) {
@@ -173,20 +180,20 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ── Render output ──────────────────────────────────────────────────────────
 
-function renderOutput(cvBlob, clBlob, company, year, brief) {
+function renderOutput(cvBlob, clBlob, company, candidateName, year, brief) {
   const body = document.getElementById('outputBody');
   body.innerHTML = '';
 
   body.appendChild(makeDownloadCard(
     cvBlob,
-    `Daniel_Szwarc_CV_${company}_${year}.docx`,
+    `${candidateName}_CV_${company}_${year}.docx`,
     'Tailored CV',
     cvIcon()
   ));
 
   body.appendChild(makeDownloadCard(
     clBlob,
-    `Daniel_Szwarc_CoverLetter_${company}_${year}.docx`,
+    `${candidateName}_CoverLetter_${company}_${year}.docx`,
     'Cover Letter',
     mailIcon()
   ));
